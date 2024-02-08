@@ -3,9 +3,9 @@
 #
 # import uvicorn
 #
-# from api.routers.resource_routes import resource_router
-#
-# sys.path.append(str(Path(__file__).resolve().parent))
+from api.routers.resource_routes import resource_router
+
+sys.path.append(str(Path(__file__).resolve().parent))
 # from fastapi import FastAPI
 # from fastapi.middleware.cors import CORSMiddleware
 #
