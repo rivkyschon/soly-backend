@@ -24,6 +24,8 @@ async def get_users_conversations(user_id: str) -> List[Chat]:
         chats.append(chat)
 
     return chats
+
+
 #
 # async def get_conversation_by_id(conversation_id: ObjectId):
 #     return conversation_collection.find_one({"_id": conversation_id})
@@ -34,6 +36,7 @@ async def delete_conversation(conversation_id: str) -> bool:
     update_operation = {"$set": {"is_shown": False}}
     result = conversation_collection.update_one(filter_criteria, update_operation)
     return result.modified_count > 0
+
 
 async def create_conversation(conversation: Conversation) -> str:
     result = conversation_collection.insert_one(conversation.to_dict())

@@ -1,3 +1,5 @@
+import json
+
 from fastapi import APIRouter, WebSocketException
 from services.controllers import chat_controller
 from db_management.models.entities import Message
@@ -8,6 +10,8 @@ from queue import Queue
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
 import traceback
+
+from soly_chatbot.chat import Chat
 
 # Constants for queue management
 BATCH_SIZE = 50  # Number of messages to process in each batch
@@ -83,20 +87,37 @@ async def websocket_endpoint(websocket: WebSocket):
         asyncio.create_task(process_message_queue())
         websocket_endpoint._queue_processor_started = True
 
-    try:
-        # Handling incoming and outgoing messages
-        while True:
-            user_message = await websocket.receive_json()
-            user_message: Message = Message.from_dict(user_message)
-            soly_message: Message = Message(conversation_id="123", content="hello")  # Replace with chatbot logic
+    soly_chat: Chat = Chat(conversation_id="1", user_id="1")
 
-            await websocket.send_json(soly_message.to_dict())
+    while True:
+        data = await websocket.receive_json()
+        print(data)  # You can still print the entire received JSON for debugging.
 
-            # Add messages to the queue instead of directly saving to the DB
-            message_queue.put(soly_message)
-            message_queue.put(user_message)
+        # Assuming your Message model or the incoming JSON directly has conversation_id and user_id
+        conversation_id = data.get('conversation_id')
+        user_id = data.get('user_id')
 
-    except WebSocketDisconnect:
+        # Check if conversation_id and user_id are not None
+        if conversation_id is None or user_id is None:
+            # Handle cases where conversation_id or user_id is missing
+            # For example, you can send an error message back or skip processing this message
+            continue  # Or any other error handling
 
-        # Handle WebSocket disconnection
-        pass
+        # If you need to create or update the Chat object with these IDs
+        if soly_chat.conversation_id is None:
+            soly_chat.conversation_id = conversation_id
+        if soly_chat.user_id is None:
+            soly_chat.user_id = user_id
+
+        user_message = Message(conversation_id=conversation_id, user_id=user_id, content=data.get('content'))
+        soly_message: Message = await soly_chat.get_response(user_message.content)  # Adjust based on your needs
+
+        await websocket.send_json(soly_message.to_dict())
+
+        # Add messages to the queue if needed
+        message_queue.put(soly_message)
+        message_queue.put(user_message)
+
+    # except WebSocketDisconnect:
+    # # Handle WebSocket disconnection
+    # pass

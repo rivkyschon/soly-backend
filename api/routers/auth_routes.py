@@ -67,7 +67,7 @@ async def insert_user(user: User):
     if existing_user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Email is already in use",
+            detail="Email is already in user",
         )
 
     # Hash the password before inserting the user

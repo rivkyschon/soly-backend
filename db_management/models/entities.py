@@ -16,19 +16,6 @@ class GenderEnum(str, Enum):
     other = "I don't want to specify"
 
 
-class Score(BaseModel):
-    id: Union[str | None] = None
-    user_id: Union[str | None] = None
-    total_score: Union[int | None] = None
-    level: Union[int | None] = None
-    rank_earned: Union[str | None] = None
-    streak_days: Union[int | None] = None
-    resource_streak_days: Union[int | None] = None
-    resources_created: Union[int | None] = None
-    last_activity_date: datetime = datetime(1, 1, 1)
-    last_resource_creation_date: datetime = datetime(1, 1, 1)
-
-
 class User(Auth_User):
     id: Union[str | None] = None
     hashed_password: Union[constr(max_length=100), None] = None
@@ -41,7 +28,6 @@ class User(Auth_User):
     join_date: datetime = Field(default_factory=datetime.now)
     profile_picture: Union[HttpUrl, bytes, None] = None
     in_research: Union[bool | None] = False
-    score_id: Union[str, None] = None
 
     @classmethod
     def from_dict(cls, user_dict):
@@ -82,8 +68,7 @@ class Message(BaseModel):
     conversation_id: str
     content: str
     sent_datetime: datetime = Field(default_factory=datetime.now)
-
-    # attachment: object  # todo: check which files we have to support
+    attachment: Union[str | None] = None
 
     def to_dict(self):
         # Copy the dictionary to avoid modifying the original __dict__
@@ -134,3 +119,16 @@ class Resource(BaseModel):
     description: str
     create_datetime: datetime = Field(default_factory=datetime.now)
     image: Union[HttpUrl, bytes, None] = None
+
+
+class Score(BaseModel):
+    id: Union[str | None] = None
+    user_id: Union[str | None] = None
+    total_score: Union[int | None] = None
+    level: Union[int | None] = None
+    rank_earned: Union[str | None] = None
+    streak_days: Union[int | None] = None
+    resource_streak_days: Union[int | None] = None
+    resources_created: Union[int | None] = None
+    last_activity_date: datetime = datetime(1, 1, 1)
+    last_resource_creation_date: datetime = datetime(1, 1, 1)
