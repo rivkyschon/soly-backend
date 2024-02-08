@@ -3,9 +3,6 @@
 #
 # import uvicorn
 #
-from api.routers.resource_routes import resource_router
-
-sys.path.append(str(Path(__file__).resolve().parent))
 # from fastapi import FastAPI
 # from fastapi.middleware.cors import CORSMiddleware
 #
@@ -51,6 +48,9 @@ sys.path.append(str(Path(__file__).resolve().parent))
 #
 import sys
 from pathlib import Path
+from api.routers.resource_routes import resource_router
+
+sys.path.append(str(Path(__file__).resolve().parent))
 
 import uvicorn
 
